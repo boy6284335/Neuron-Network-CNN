@@ -6,6 +6,8 @@ from keras.layers import MaxPooling1D # Pooling
 from keras.layers import Flatten
 from keras.layers import Dense # Fully Connected Networks
 from keras import backend as K
+from keras.utils import plot_model
+from keras import  layers
 
 #traning data
 u0_ls = []
@@ -68,12 +70,13 @@ model.add(MaxPooling1D(pool_size=1))
 model.add(Flatten())
 model.add(Dense(100, activation='relu'))
 model.add(Dense(1))
+
 loss_ls = []
 def RMSE(y_true, y_pred):
     loss = K.sqrt(K.mean(K.square(y_pred - y_true)))
     return loss
 model.compile(loss=RMSE, optimizer='sgd')
-
+plot_model(model,to_file='model.png',show_shapes=True,dpi=300)
 
 
 fig = plt.figure()
@@ -81,7 +84,16 @@ print('----------------Training----------------------')
 lin = np.linspace(0, 1000, 1001)
 plt.plot(lin, y0_ls)
 history = model.fit(ux0_ls, y0_ls, epochs=60, batch_size=15)
-
+weight_updated0 = model.layers[0].get_weights()[0]
+# weight_updated1 = model.layers[1].get_weights()[0]
+# weight_updated2 = model.layers[2].get_weights()[0]
+# weight_updated3 = model.layers[3].get_weights()[0]
+# weight_updated4 = model.layers[4].get_weights()[0]
+print('輸入層: ', weight_updated0)
+# print('第一層隱藏層: ', weight_updated1)
+# print('第二層隱藏層: ', weight_updated2)
+# print('第三層隱藏層: ', weight_updated3)
+# print('輸出層: ', weight_updated4)
 print('----------------Training prediction----------------------')
 prediction1 = model.predict(ux0_ls)
 plt.plot(lin, prediction1)
@@ -99,4 +111,4 @@ plt.plot(history.history['loss'])
 plt.show()
 
 
-
+print(model.summary())
